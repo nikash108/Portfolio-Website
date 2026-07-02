@@ -5,7 +5,482 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
 <title>Nikash K R — Portfolio</title>
 <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,300&display=swap" rel="stylesheet"/>
-<link rel="stylesheet" href="css/style.css"/>
+<style>
+  :root {
+    --bg: #0a0a0f;
+    --surface: #111118;
+    --surface2: #1a1a24;
+    --accent: #e3e3e7;
+    --accent2: #f7a26f;
+    --accent3: #6fffd1;
+    --text: #f0eff8;
+    --muted: #7e7d92;
+    --border: rgba(124,111,247,0.15);
+    --glow: rgba(210, 209, 219, 0.25);
+  }
+  *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+  html{scroll-behavior:smooth}
+  :root {
+    color-scheme: dark;
+  }
+  body{
+    background:var(--bg);color:var(--text);
+    font-family:'DM Sans',sans-serif;font-weight:300;
+    overflow-x:hidden;line-height:1.7;position:relative;
+  }
+  body.light{
+    --bg:#eef2fb;
+    --surface:#ffffff;
+    --surface2:#f0f4fe;
+    --accent:#1f3d73;
+    --accent2:#2563eb;
+    --accent3:#0d9488;
+    --text:#0f172a;
+    --muted:#475569;
+    --border:rgba(37,99,235,.18);
+    --glow:rgba(37,99,235,.2);
+  }
+  body.light .hero-panel{
+    background:rgba(18, 32, 75, 0.92);
+    border-color:rgba(37,99,235,.22);
+  }
+  body.light .hero-image{
+    border-color:rgba(37,99,235,.23);
+  }
+  body.light .hero-profile-copy{
+    color:#ffffff;
+  }
+  body.light .hero-profile-copy p{
+    color:#ffffff;
+  }
+  body.light .hero-profile-label{
+    background:rgba(37,99,235,.12);
+    color:var(--accent2);
+  }
+  body.light .profile-chips span{
+    background:rgba(37,99,235,.08);
+    border-color:rgba(37,99,235,.16);
+    color:var(--accent2);
+  }
+  body.light .section-sub,
+  body.light .about-text p,
+  body.light .about-card p,
+  body.light .project-card p,
+  body.light .cert-name,
+  body.light .cert-meta,
+  body.light .footer-copy,
+  body.light .chat-close,
+  body.light .hero-role,
+  body.light .hero-desc,
+  body.light .nav-links a{
+    color:#475569;
+  }
+  body.light .hero-image{
+    border-color:rgba(30,109,248,.23);
+  }
+  body.light .hero-profile-copy{
+    color:#e6ecff;
+  }
+  body.light .hero-profile-label{
+    background:rgba(30,109,248,.12);
+    color:var(--accent2);
+  }
+  body.light .profile-chips span{
+    background:rgba(30,109,248,.08);
+    border-color:rgba(30,109,248,.16);
+    color:var(--accent2);
+  }
+  body.light .hero-resume-link{color:#000!important;}
+  body.light:before{opacity:0.2}
+  /* NOISE OVERLAY */
+  body::before{
+    content:'';position:fixed;inset:0;
+    background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.03'/%3E%3C/svg%3E");
+    pointer-events:none;z-index:-2;opacity:0.4;
+  }
+  #matrixCanvas{
+    position:fixed;inset:0;
+    z-index:-1;pointer-events:none;opacity:.35;
+    background:transparent;
+  }
+  .loading-screen{
+    position:fixed;inset:0;
+    background:linear-gradient(180deg,rgba(10,10,15,.95),rgba(10,10,15,.9));
+    display:flex;align-items:center;justify-content:center;z-index:10000;
+    color:#fff;font-family:'DM Sans',sans-serif;
+    transition:opacity .4s ease,visibility .4s ease;
+  }
+  .loading-screen.hidden{opacity:0;visibility:hidden;pointer-events:none}
+  .loading-inner{
+    text-align:center;display:flex;flex-direction:column;align-items:center;gap:1rem;
+  }
+  .loading-spinner{
+    width:68px;height:68px;border:6px solid rgba(255,255,255,.18);
+    border-top-color:var(--accent);border-radius:50%;animation:spin 1s linear infinite;
+  }
+  .loading-screen p{font-size:1rem;color:rgba(255,255,255,.88);}
+  @keyframes spin{100%{transform:rotate(360deg)}}
+  .theme-toggle{
+    display:inline-flex;align-items:center;justify-content:center;
+    width:42px;height:42px;border-radius:50%;border:1px solid var(--border);
+    background:rgba(255,255,255,.06);color:var(--text);cursor:pointer;
+    transition:all .2s; font-size:1.1rem;
+  }
+  .theme-toggle:hover{transform:translateY(-1px);border-color:var(--accent)}
+  .floating-dock{
+    position:fixed;right:1.1rem;top:50%;transform:translateY(-50%);
+    display:flex;flex-direction:column;gap:.8rem;z-index:95;
+    padding:.85rem .55rem;background:rgba(10,10,15,.7);
+    border:1px solid var(--border);border-radius:1.25rem;
+    backdrop-filter:blur(16px);
+  }
+  .floating-dock a{
+    width:44px;height:44px;display:flex;align-items:center;justify-content:center;
+    border-radius:50%;background:rgba(255,255,255,.06);color:var(--text);
+    text-decoration:none;font-size:1.1rem;transition:all .2s;
+  }
+  .floating-dock a:hover{background:rgba(124,111,247,.14);color:var(--accent)}
+  .hero-grid{
+    display:grid;grid-template-columns:minmax(260px,360px) 1fr;gap:3rem;align-items:center;position:relative;z-index:2;
+  }
+  .hero-panel{background:rgba(6, 12, 32, 0.96);border:1px solid rgba(111,255,209,.18);
+    padding:2rem;border-radius:2rem;backdrop-filter:blur(18px);box-shadow:0 30px 60px rgba(0,0,0,.35);
+  }
+  .hero-image{width:100%;border-radius:2rem;overflow:hidden;border:2px solid rgba(111,255,209,.2);box-shadow:0 24px 56px rgba(111,255,209,.14);}
+  .hero-image img{display:block;width:100%;height:auto;}
+  .hero-profile-copy{margin-top:1.5rem;color:var(--text);}
+  .hero-profile-label{display:inline-flex;padding:.35rem .85rem;border-radius:999px;background:rgba(111,255,209,.12);color:var(--accent3);font-size:.75rem;font-weight:600;letter-spacing:.08em;text-transform:uppercase;}
+  .hero-profile-copy p{margin:1rem 0 1.2rem;line-height:1.8;color:var(--text);}
+  .profile-chips{display:flex;flex-wrap:wrap;gap:.6rem}
+  .profile-chips span{background:rgba(111,255,209,.1);border:1px solid rgba(111,255,209,.18);color:var(--accent3);padding:.45rem .9rem;border-radius:2rem;font-size:.78rem;}
+  .hero-btns{display:flex;gap:1rem;flex-wrap:wrap;align-items:flex-start}
+  .btn-outline{min-width:fit-content;}
+  @media(max-width:992px){
+    .hero-grid{grid-template-columns:1fr;}
+  }
+  @media(max-width:768px){
+    .about-grid{grid-template-columns:1fr}
+    .nav-links{display:none}
+    .hero-btns{flex-direction:column;max-width:100%}
+    #chat-window{width:calc(100vw - 2rem);right:1rem;bottom:5rem}
+    .floating-dock{display:none}
+    #matrixCanvas{display:none}
+  }
+
+  /* NAV */
+  nav{
+    position:fixed;top:0;left:0;right:0;z-index:100;
+    display:flex;align-items:center;justify-content:space-between;
+    padding:1.2rem 5vw;
+    background:rgba(10,10,15,0.7);
+    backdrop-filter:blur(20px);
+    border-bottom:1px solid var(--border);
+  }
+  .nav-logo{
+    font-family:'Syne',sans-serif;font-weight:800;font-size:1.3rem;
+    background:linear-gradient(135deg,var(--accent),var(--accent2));
+    -webkit-background-clip:text;-webkit-text-fill-color:transparent;
+    letter-spacing:-0.02em;
+  }
+  .nav-links{display:flex;gap:2.5rem;list-style:none}
+  .nav-links a{
+    color:var(--muted);text-decoration:none;font-size:.9rem;
+    font-weight:400;letter-spacing:.05em;transition:color .2s;
+  }
+  .nav-links a:hover{color:var(--text)}
+  .nav-cta{
+    background:var(--accent);color:#fff;border:none;
+    padding:.5rem 1.2rem;border-radius:2rem;font-family:'DM Sans',sans-serif;
+    font-size:.85rem;font-weight:500;cursor:pointer;
+    transition:all .2s;text-decoration:none;
+  }
+  .nav-cta:hover{background:#9590f9;transform:translateY(-1px)}
+
+  /* HERO */
+  #hero{
+    min-height:100vh;position:relative;overflow:hidden;
+    padding:6rem 5vw 4rem;
+  }
+  .hero-orb{
+    position:absolute;border-radius:50%;filter:blur(80px);pointer-events:none;
+  }
+  .orb1{width:500px;height:500px;background:rgba(124,111,247,.12);top:-100px;right:-100px}
+  .orb2{width:300px;height:300px;background:rgba(111,255,209,.08);bottom:0;left:10%}
+  .hero-content{max-width:700px;position:relative}
+  .hero-tag{
+    display:inline-flex;align-items:center;gap:.5rem;
+    border:1px solid var(--border);border-radius:2rem;
+    padding:.35rem 1rem;font-size:.8rem;color:var(--accent);
+    margin-bottom:1.5rem;letter-spacing:.1em;text-transform:uppercase;
+    background:rgba(124,111,247,.07);
+  }
+  .hero-tag::before{content:'';width:6px;height:6px;background:var(--accent3);border-radius:50%;animation:pulse 2s infinite}
+  @keyframes pulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.4;transform:scale(.7)}}
+  h1.hero-name{
+    font-family:'Syne',sans-serif;font-size:clamp(3rem,7vw,6rem);
+    font-weight:800;line-height:1;letter-spacing:-.04em;
+    margin-bottom:.3rem;
+  }
+  .hero-name span{
+    background:linear-gradient(135deg,var(--accent) 0%,var(--accent2) 100%);
+    -webkit-background-clip:text;-webkit-text-fill-color:transparent;
+  }
+  .hero-role{
+    font-family:'Syne',sans-serif;font-size:clamp(1.25rem,2.5vw,1.8rem);
+    font-weight:800;color:var(--muted);margin-bottom:1.5rem;
+  }
+  .hero-desc{
+    font-size:1.15rem;color:var(--text);max-width:560px;
+    margin-bottom:2.5rem;line-height:1.95;font-weight:500;
+  }
+  .hero-btns{display:flex;gap:1rem;flex-wrap:wrap}
+  .btn-primary{
+    display:inline-flex;align-items:center;gap:.5rem;
+    background:var(--accent);color:#fff;padding:.8rem 2rem;
+    border-radius:2rem;text-decoration:none;font-weight:600;
+    font-size:1rem;transition:all .25s;border:none;cursor:pointer;
+  }
+  .black-text{color:#000!important;}
+  .btn-primary:hover{background:#9590f9;transform:translateY(-2px);box-shadow:0 10px 30px rgba(124,111,247,.3)}
+  .btn-outline{
+    display:inline-flex;align-items:center;gap:.5rem;
+    border:1px solid var(--border);color:var(--text);padding:.8rem 2rem;
+    border-radius:2rem;text-decoration:none;font-weight:400;
+    font-size:.95rem;transition:all .25s;background:transparent;cursor:pointer;
+  }
+  .btn-outline:hover{border-color:var(--accent);color:var(--accent);transform:translateY(-2px)}
+
+  /* SECTIONS */
+  section{padding:6rem 5vw}
+  .section-label{
+    font-size:.88rem;letter-spacing:.26em;text-transform:uppercase;
+    color:var(--accent);font-weight:700;margin-bottom:1rem;
+  }
+  .section-title{
+    font-family:'Syne',sans-serif;font-size:clamp(2.3rem,4vw,3.4rem);
+    font-weight:900;letter-spacing:-.03em;margin-bottom:1.3rem;line-height:1.05;
+  }
+  .section-sub{color:var(--muted);max-width:560px;margin-bottom:3rem;font-size:1.02rem;font-weight:600;line-height:2}
+
+  /* ABOUT */
+  #about{background:var(--surface)}
+  .about-grid{display:grid;grid-template-columns:1fr 1fr;gap:4rem;align-items:start}
+  .about-cards{display:flex;flex-direction:column;gap:1rem}
+  .about-card{
+    background:var(--surface2);border:1px solid var(--border);
+    border-radius:1rem;padding:1.5rem;
+    display:flex;align-items:flex-start;gap:1rem;
+    transition:border-color .2s;
+  }
+  .about-card:hover{border-color:var(--accent)}
+  .about-card-icon{
+    width:42px;height:42px;border-radius:.7rem;
+    background:rgba(124,111,247,.12);display:flex;align-items:center;
+    justify-content:center;font-size:1.2rem;flex-shrink:0;
+  }
+  .about-card h3{font-family:'Syne',sans-serif;font-size:1rem;font-weight:700;margin-bottom:.3rem}
+  .about-card p{font-size:.98rem;color:var(--text);font-weight:600}
+  .about-text p{color:var(--text);margin-bottom:1.5rem;line-height:1.95;font-size:1.02rem;font-weight:500}
+  .skills-tags{display:flex;flex-wrap:wrap;gap:.6rem;margin-top:1rem}
+  .tag{
+    background:rgba(124,111,247,.1);border:1px solid rgba(124,111,247,.2);
+    color:var(--accent);padding:.3rem .9rem;border-radius:2rem;
+    font-size:.78rem;font-weight:500;letter-spacing:.03em;
+  }
+  .tag.green{background:rgba(111,255,209,.08);border-color:rgba(111,255,209,.2);color:var(--accent3)}
+  .tag.orange{background:rgba(247,162,111,.08);border-color:rgba(247,162,111,.2);color:var(--accent2)}
+
+  /* PROJECTS */
+  .projects-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:1.5rem}
+  .project-card{
+    background:var(--surface);border:1px solid var(--border);
+    border-radius:1.2rem;padding:2rem;
+    transition:all .25s;position:relative;overflow:hidden;cursor:default;
+  }
+  .project-card::before{
+    content:'';position:absolute;inset:0;
+    background:radial-gradient(circle at top left,rgba(124,111,247,.08),transparent 60%);
+    opacity:0;transition:opacity .3s;
+  }
+  .project-card:hover{transform:translateY(-4px);border-color:rgba(124,111,247,.4);box-shadow:0 20px 40px rgba(0,0,0,.3)}
+  .project-card:hover::before{opacity:1}
+  .project-num{
+    font-family:'Syne',sans-serif;font-size:3rem;font-weight:800;
+    color:rgba(124,111,247,.1);line-height:1;margin-bottom:1rem;
+  }
+  .project-card h3{font-family:'Syne',sans-serif;font-weight:800;font-size:1.25rem;margin-bottom:.7rem}
+  .project-card p{font-size:1rem;color:var(--text);line-height:1.85;margin-bottom:1.2rem;font-weight:500}
+  .project-techs{display:flex;flex-wrap:wrap;gap:.5rem}
+  .tech-badge{
+    background:var(--surface2);border:1px solid var(--border);
+    color:var(--muted);padding:.2rem .7rem;border-radius:1rem;font-size:.72rem;
+  }
+
+  /* CERTIFICATES */
+  #certificates{background:var(--surface)}
+  .cert-slideshow{position:relative;overflow:hidden;border-radius:1.5rem;border:1px solid var(--border)}
+  .cert-track{
+    display:flex;transition:transform .5s cubic-bezier(.4,0,.2,1);
+  }
+  .cert-slide{
+    flex:0 0 100%;min-width:0;
+    display:flex;align-items:center;justify-content:center;
+    padding:3rem;background:var(--surface2);min-height:400px;
+  }
+  .cert-inner{
+    max-width:600px;width:100%;background:var(--surface);
+    border:1px solid var(--border);border-radius:1.2rem;
+    padding:2.5rem;text-align:center;position:relative;
+  }
+  .cert-issuer{
+    display:inline-block;font-size:.82rem;letter-spacing:.16em;
+    text-transform:uppercase;color:var(--accent);font-weight:700;margin-bottom:1rem;
+  }
+  .cert-title{
+    font-family:'Syne',sans-serif;font-weight:900;font-size:1.45rem;
+    margin-bottom:.6rem;line-height:1.3;
+  }
+  .cert-name{color:var(--text);font-size:1rem;font-weight:600;margin-bottom:1rem}
+  .cert-badge{
+    display:inline-flex;align-items:center;gap:.4rem;
+    background:rgba(111,255,209,.08);border:1px solid rgba(111,255,209,.2);
+    color:var(--accent3);padding:.4rem 1rem;border-radius:2rem;font-size:.78rem;
+  }
+  .cert-meta{font-size:.9rem;color:var(--muted);margin-top:.8rem;line-height:1.75;font-weight:500}
+  .cert-controls{
+    padding:1.5rem;background:var(--surface2);border-top:1px solid var(--border);
+  }
+  .cert-btn{
+    width:40px;height:40px;border-radius:50%;border:1px solid var(--border);
+    background:transparent;color:var(--text);cursor:pointer;
+    display:flex;align-items:center;justify-content:center;transition:all .2s;font-size:1rem;
+  }
+  .cert-btn:hover{border-color:var(--accent);color:var(--accent)}
+  .cert-dots{display:flex;gap:.5rem}
+  .cert-dot{
+    width:8px;height:8px;border-radius:50%;background:var(--border);
+    cursor:pointer;transition:all .2s;border:none;
+  }
+  .cert-dot.active{background:var(--accent);width:24px;border-radius:4px}
+
+  /* CHATBOT */
+  #chatbot-btn{
+    position:fixed;bottom:2rem;right:2rem;z-index:200;
+    width:56px;height:56px;border-radius:50%;
+    background:linear-gradient(135deg,var(--accent),#5b52f0);
+    border:none;cursor:pointer;color:#fff;font-size:1.4rem;
+    box-shadow:0 8px 25px rgba(124,111,247,.4);
+    transition:all .25s;display:flex;align-items:center;justify-content:center;
+  }
+  #chatbot-btn:hover{transform:scale(1.1);box-shadow:0 12px 35px rgba(124,111,247,.5)}
+  #chat-window{
+    position:fixed;bottom:5.5rem;right:2rem;z-index:200;
+    width:360px;max-height:500px;display:none;flex-direction:column;
+    background:var(--surface);border:1px solid var(--border);
+    border-radius:1.5rem;overflow:hidden;
+    box-shadow:0 25px 60px rgba(0,0,0,.5);
+  }
+  #chat-window.open{display:flex}
+  .chat-header{
+    padding:1rem 1.2rem;background:var(--surface2);
+    border-bottom:1px solid var(--border);
+    display:flex;align-items:center;gap:.8rem;
+  }
+  .chat-avatar{
+    width:36px;height:36px;border-radius:50%;
+    background:linear-gradient(135deg,var(--accent),var(--accent2));
+    display:flex;align-items:center;justify-content:center;font-size:.9rem;
+    flex-shrink:0;
+  }
+  .chat-header-info h4{font-family:'Syne',sans-serif;font-size:.9rem;font-weight:700}
+  .chat-header-info span{font-size:.73rem;color:var(--accent3)}
+  .chat-close{margin-left:auto;background:none;border:none;color:var(--muted);cursor:pointer;font-size:1.2rem;padding:.2rem}
+  .chat-messages{
+    flex:1;overflow-y:auto;padding:1rem;
+    display:flex;flex-direction:column;gap:.8rem;
+  }
+  .chat-messages::-webkit-scrollbar{width:4px}
+  .chat-messages::-webkit-scrollbar-thumb{background:var(--border);border-radius:2px}
+  .msg{max-width:80%;padding:.65rem 1rem;border-radius:1rem;font-size:.85rem;line-height:1.6}
+  .msg.bot{background:var(--surface2);border:1px solid var(--border);align-self:flex-start;border-bottom-left-radius:.2rem}
+  .msg.user{background:var(--accent);color:#fff;align-self:flex-end;border-bottom-right-radius:.2rem}
+  .msg.typing span{
+    display:inline-block;width:6px;height:6px;background:var(--muted);
+    border-radius:50%;margin:0 2px;
+    animation:typingDot 1.2s ease infinite;
+  }
+  .msg.typing span:nth-child(2){animation-delay:.2s}
+  .msg.typing span:nth-child(3){animation-delay:.4s}
+  @keyframes typingDot{0%,80%,100%{transform:translateY(0)}40%{transform:translateY(-5px)}}
+  .chat-input-area{
+    padding:.8rem 1rem;border-top:1px solid var(--border);
+    display:flex;gap:.6rem;align-items:center;
+  }
+  #chat-input{
+    flex:1;background:var(--surface2);border:1px solid var(--border);
+    border-radius:2rem;padding:.6rem 1rem;color:var(--text);
+    font-family:'DM Sans',sans-serif;font-size:.85rem;outline:none;
+    transition:border-color .2s;
+  }
+  #chat-input:focus{border-color:var(--accent)}
+  #chat-send{
+    width:36px;height:36px;border-radius:50%;background:var(--accent);
+    border:none;cursor:pointer;color:#fff;
+    display:flex;align-items:center;justify-content:center;
+    font-size:.9rem;transition:all .2s;flex-shrink:0;
+  }
+  #chat-send:hover{background:#9590f9}
+
+  /* FOOTER */
+  footer{
+    padding:3rem 5vw;background:var(--surface);
+    border-top:1px solid var(--border);
+    display:flex;flex-direction:column;align-items:center;gap:1.5rem;text-align:center;
+  }
+  .footer-logo{
+    font-family:'Syne',sans-serif;font-weight:800;font-size:1.5rem;
+    background:linear-gradient(135deg,var(--accent),var(--accent2));
+    -webkit-background-clip:text;-webkit-text-fill-color:transparent;
+  }
+  .footer-links{display:flex;gap:1.5rem;flex-wrap:wrap;justify-content:center}
+  .footer-link{
+    display:flex;align-items:center;gap:.5rem;
+    color:var(--muted);text-decoration:none;font-size:.9rem;
+    transition:color .2s;padding:.5rem 1rem;border:1px solid var(--border);
+    border-radius:2rem;
+  }
+  .footer-link:hover{color:var(--text);border-color:var(--accent)}
+  .footer-copy{color:var(--muted);font-size:.9rem;font-weight:500}
+  .contact-form{width:100%;max-width:640px;margin-top:1.5rem;display:grid;gap:1rem;text-align:left}
+  .contact-field{display:grid;gap:.4rem}
+  .contact-label{font-size:.95rem;font-weight:600;color:var(--text)}
+  .contact-input,
+  .contact-textarea{width:100%;padding:1rem 1.1rem;border-radius:1rem;border:1px solid var(--border);background:var(--surface2);color:var(--text);font-family:'DM Sans',sans-serif;font-size:1rem;outline:none;transition:border-color .2s,box-shadow .2s}
+  .contact-input:focus,
+  .contact-textarea:focus{border-color:var(--accent);box-shadow:0 0 0 4px rgba(124,111,247,.08)}
+  .contact-textarea{min-height:140px;resize:vertical}
+  .field-error{color:#ff6b6b;font-size:.88rem;font-weight:600}
+  .form-success{color:#7fffd4;background:rgba(111,255,209,.08);border:1px solid rgba(111,255,209,.2);padding:1rem 1.2rem;border-radius:1rem;font-size:.95rem;font-weight:600}
+  .form-submit{align-self:flex-start;background:var(--accent);color:#111;cursor:pointer;border:none;padding:.9rem 1.6rem;border-radius:2rem;font-weight:700;transition:all .2s}
+  .form-submit:hover{background:#9590f9}
+
+  /* DIVIDER */
+  .divider{
+    height:1px;background:linear-gradient(to right,transparent,var(--border),transparent);
+    margin:0 5vw;
+  }
+
+  /* ANIMATE IN */
+  .fade-up{opacity:0;transform:translateY(30px);transition:opacity .6s ease, transform .6s ease}
+  .fade-up.visible{opacity:1;transform:translateY(0)}
+
+  @media(max-width:768px){
+    .about-grid{grid-template-columns:1fr}
+    .nav-links{display:none}
+    .hero-btns{flex-direction:column;max-width:300px}
+    #chat-window{width:calc(100vw - 2rem);right:1rem;bottom:5rem}
+  }
+</style>
 </head>
 <body>
   <div class="loading-screen" id="loadingScreen">
@@ -34,7 +509,7 @@
   <a href="#about" title="About">👤</a>
   <a href="#projects" title="Projects">💼</a>
   <a href="#contact" title="Contact">✉️</a>
-  <a href="resume/Resume.pdf" download title="Download Resume">📄</a>
+  <a href="resume.pdf" download title="Download Resume">📄</a>
 </aside>
 
 <!-- HERO -->
@@ -44,7 +519,7 @@
   <div class="hero-grid">
     <div class="hero-panel fade-up">
       <div class="hero-image">
-        <img src="images/pfp.jpeg" alt="Profile photo of Nikash K R" />
+        <img src="pfp.jpeg" alt="Profile photo of Nikash K R" />
       </div>
       <div class="hero-profile-copy">
         <span class="hero-profile-label">Profile</span>
@@ -72,7 +547,7 @@
           <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
           Get in Touch
         </a>
-        <a href="resume/Resume.pdf" download class="btn-outline hero-resume-link">
+        <a href="Resume.pdf" download class="btn-outline hero-resume-link">
           <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 5v14m-7-7h14"/></svg>
           Download Resume
         </a>
@@ -144,7 +619,7 @@
   <h2 class="section-title fade-up">Download My Resume</h2>
   <p class="section-sub fade-up">Grab the full resume to see skills, education, certifications, and projects in one place.</p>
   <div class="fade-up" style="margin-top:2rem;">
-    <a href="resume/Resume.pdf" download class="btn-primary" style="color:#000;">
+    <a href="resume.pdf" download class="btn-primary" style="color:#000;">
       <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 5v14m-7-7h14"/></svg>
       Download Resume
     </a>
@@ -355,6 +830,212 @@
   </div>
 </div>
 
-<script src="js/script.js"></script>
+<script>
+// MATRIX RAIN EFFECT
+const matrixCanvas = document.getElementById('matrixCanvas')
+const matrixCtx = matrixCanvas.getContext('2d')
+const letters = '0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ@#$%^&*()*&^%'
+let matrixFont = 16
+let matrixColumns = []
+
+function resizeMatrix(){
+  matrixCanvas.width = window.innerWidth
+  matrixCanvas.height = window.innerHeight
+  matrixFont = window.innerWidth < 768 ? 12 : 16
+  matrixColumns = Array(Math.floor(matrixCanvas.width / matrixFont)).fill(1)
+}
+
+function drawMatrix(){
+  if(!matrixCtx) return
+  matrixCtx.fillStyle = 'rgba(10,10,15,0.15)'
+  matrixCtx.fillRect(0, 0, matrixCanvas.width, matrixCanvas.height)
+  matrixCtx.fillStyle = 'rgba(124,111,247,0.9)'
+  matrixCtx.font = `${matrixFont}px monospace`
+  matrixColumns.forEach((y, index) => {
+    const text = letters.charAt(Math.floor(Math.random()*letters.length))
+    const x = index * matrixFont
+    matrixCtx.fillText(text, x, y * matrixFont)
+    if(y * matrixFont > matrixCanvas.height && Math.random() > 0.975) matrixColumns[index] = 0
+    matrixColumns[index]++
+  })
+  requestAnimationFrame(drawMatrix)
+}
+
+window.addEventListener('resize', resizeMatrix)
+resizeMatrix()
+requestAnimationFrame(drawMatrix)
+
+// LOADING SCREEN
+const loadingScreen = document.getElementById('loadingScreen')
+window.addEventListener('load', () => {
+  setTimeout(() => {
+    loadingScreen.classList.add('hidden')
+  }, 650)
+})
+
+// DARK/LIGHT MODE
+const themeToggle = document.getElementById('themeToggle')
+const rootBody = document.body
+const savedTheme = localStorage.getItem('nikashTheme') || 'dark'
+function applyTheme(theme){
+  rootBody.classList.toggle('light', theme === 'light')
+  rootBody.classList.toggle('dark', theme !== 'light')
+  themeToggle.textContent = theme === 'light' ? '☀️' : '🌙'
+  localStorage.setItem('nikashTheme', theme)
+}
+applyTheme(savedTheme)
+
+themeToggle.addEventListener('click', () => {
+  applyTheme(rootBody.classList.contains('light') ? 'dark' : 'light')
+})
+
+// SCROLL ANIMATIONS
+const observer = new IntersectionObserver(entries => {
+  entries.forEach(e => {
+    if(e.isIntersecting) e.target.classList.add('visible')
+  })
+}, { threshold: .12 })
+document.querySelectorAll('.fade-up').forEach(el => observer.observe(el))
+
+// CERTIFICATE SLIDESHOW
+let certIdx = 0
+const totalCerts = 4
+const track = document.getElementById('certTrack')
+const dots = document.querySelectorAll('.cert-dot')
+
+function goToCert(i){
+  certIdx = (i + totalCerts) % totalCerts
+  track.style.transform = `translateX(-${certIdx*100}%)`
+  dots.forEach((d,j) => d.classList.toggle('active', j === certIdx))
+}
+
+document.getElementById('certNext').addEventListener('click', () => goToCert(certIdx + 1))
+document.getElementById('certPrev').addEventListener('click', () => goToCert(certIdx - 1))
+dots.forEach(d => d.addEventListener('click', () => goToCert(+d.dataset.i)))
+setInterval(() => goToCert(certIdx + 1), 5000)
+
+// CHATBOT — rule-based, no external API
+const chatBtn = document.getElementById('chatbot-btn')
+const chatWindow = document.getElementById('chat-window')
+const chatClose = document.getElementById('chatClose')
+const chatInput = document.getElementById('chat-input')
+const chatSend = document.getElementById('chat-send')
+const chatMessages = document.getElementById('chatMessages')
+
+const QA = [
+  { keys:['name','who','nikash'], reply:'I\'m Nikash K R — a B.Tech student specialising in Artificial Intelligence & Data Science, passionate about tech, AI, and beautiful design.' },
+  { keys:['education','study','college','cgpa','degree','university'], reply:'Nikash is pursuing B.Tech in Artificial Intelligence & Data Science with a CGPA of 8.35.' },
+  { keys:['language','code','program','java','python','html','css','javascript'], reply:'Nikash codes in Java, Python, HTML, CSS, and JavaScript.' },
+  { keys:['tool','figma','visual studio','vs code','software'], reply:'His go-to tools are Figma for design and Visual Studio Code for development.' },
+  { keys:['project','built','work','booking','ticket','dice','student','marks'], reply:'Nikash has built a Movie Ticket Booking System (Java/OOP), a Student Marks Manager (Java/HashMap), and a Python Dice Game with multiplayer support. Check the Projects section for details!' },
+  { keys:['certificate','cert','microsoft','anthropic','freecodecamp','leap','arduino'], reply:'Nikash holds 4 certificates: Anthropic AI Fluency Framework, Microsoft Power Apps Applied Skills, freeCodeCamp Responsive Web Design, and LEAP Automation with Arduino (IIT Madras).' },
+  { keys:['interest','hobby','passion','game','gaming','uiux','ui','ux','design'], reply:'Outside of coding, Nikash loves exploring gaming mechanics and UI/UX design — he believes great tech should also be beautiful!' },
+  { keys:['github'], reply:'You can find Nikash\'s code at github.com/nikash108 🚀' },
+  { keys:['linkedin','connect','contact'], reply:'Connect with Nikash on LinkedIn: linkedin.com/in/nikash-k-r-234635391 — he\'d love to hear from you!' },
+  { keys:['hello','hi','hey','sup','hiya'], reply:'Hey there! 👋 Ask me anything about Nikash\'s skills, projects, or background!' },
+  { keys:['bye','goodbye','thanks','thank'], reply:'Thanks for stopping by Nikash\'s portfolio! Feel free to reach out on LinkedIn or GitHub. 😊' },
+]
+
+const fallbacks = [
+  'Hmm, I\'m not sure about that! Try asking about Nikash\'s projects, skills, certificates, or education.',
+  'I can answer questions about Nikash\'s background, projects, and skills — give it a try!',
+  'That\'s a bit outside my knowledge! Ask me about Nikash\'s tech stack, projects, or certifications.'
+]
+let fallbackIdx = 0
+
+function getBotReply(text){
+  const lower = text.toLowerCase()
+  for(const qa of QA){
+    if(qa.keys.some(k => lower.includes(k))) return qa.reply
+  }
+  return fallbacks[fallbackIdx++ % fallbacks.length]
+}
+
+chatBtn.addEventListener('click', () => chatWindow.classList.toggle('open'))
+chatClose.addEventListener('click', () => chatWindow.classList.remove('open'))
+
+function addMsg(text, role){
+  const div = document.createElement('div')
+  div.className = `msg ${role}`
+  div.textContent = text
+  chatMessages.appendChild(div)
+  chatMessages.scrollTop = chatMessages.scrollHeight
+}
+
+function addTyping(){
+  const div = document.createElement('div')
+  div.className = 'msg bot typing'
+  div.innerHTML = '<span></span><span></span><span></span>'
+  chatMessages.appendChild(div)
+  chatMessages.scrollTop = chatMessages.scrollHeight
+  return div
+}
+
+function sendMessage(){
+  const text = chatInput.value.trim()
+  if(!text) return
+  chatInput.value = ''
+  addMsg(text, 'user')
+  const typing = addTyping()
+  setTimeout(() => {
+    typing.remove()
+    addMsg(getBotReply(text), 'bot')
+  }, 700)
+}
+
+chatSend.addEventListener('click', sendMessage)
+chatInput.addEventListener('keydown', e => { if(e.key === 'Enter') sendMessage() })
+
+// FOOTER CONTACT FORM VALIDATION
+const footerForm = document.getElementById('footerContactForm')
+const footerName = document.getElementById('footerName')
+const footerEmail = document.getElementById('footerEmail')
+const footerMessage = document.getElementById('footerMessage')
+const errorName = document.getElementById('errorName')
+const errorEmail = document.getElementById('errorEmail')
+const errorMessage = document.getElementById('errorMessage')
+const footerSuccess = document.getElementById('footerFormSuccess')
+
+function clearFooterErrors(){
+  errorName.textContent = ''
+  errorEmail.textContent = ''
+  errorMessage.textContent = ''
+  footerSuccess.style.display = 'none'
+}
+
+function validateFooterForm(){
+  let valid = true
+  clearFooterErrors()
+
+  if(!footerName.value.trim()){
+    errorName.textContent = 'Please enter your name.'
+    valid = false
+  }
+
+  const emailValue = footerEmail.value.trim()
+  if(!emailValue){
+    errorEmail.textContent = 'Please enter your email.'
+    valid = false
+  } else if(!emailValue.includes('@') || !emailValue.includes('.')){
+    errorEmail.textContent = 'Please enter a valid email address.'
+    valid = false
+  }
+
+  if(!footerMessage.value.trim()){
+    errorMessage.textContent = 'Please enter a message.'
+    valid = false
+  }
+
+  return valid
+}
+
+footerForm.addEventListener('submit', e => {
+  e.preventDefault()
+  if(validateFooterForm()){
+    footerSuccess.style.display = 'block'
+    footerForm.reset()
+  }
+})
+</script>
 </body>
 </html>
